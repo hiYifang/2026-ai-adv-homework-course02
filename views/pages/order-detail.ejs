@@ -1,90 +1,154 @@
 <div id="app" data-order-id="<%= orderId %>" data-payment-result="<%= paymentResult %>">
-  <h1 class="text-2xl font-bold text-text-primary mb-6" style="font-family: 'Noto Serif TC', serif;">訂單詳情</h1>
+  <div class="w-full max-w-[1440px] mx-auto px-6 md:px-14 py-12 md:py-16">
 
-  <div v-if="loading" class="flex justify-center py-12">
-    <div class="w-8 h-8 border-4 border-rose-primary border-t-transparent rounded-full animate-spin"></div>
-  </div>
-
-  <template v-else-if="order">
-    <!-- Payment Result Alert -->
-    <div
-      v-if="paymentResult && paymentMessages[paymentResult]"
-      class="rounded-xl p-4 mb-6 text-sm"
-      :class="paymentMessages[paymentResult].cls"
-    >
-      {{ paymentMessages[paymentResult].text }}
+    <!-- Loading -->
+    <div v-if="loading" class="flex justify-center py-16">
+      <div class="w-5 h-5 border-2 border-lime border-t-transparent rounded-full animate-spin"></div>
     </div>
 
-    <!-- Order Info -->
-    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-      <div class="flex items-start justify-between">
-        <div>
-          <p class="text-sm text-text-secondary">訂單編號：{{ order.order_no }}</p>
-          <p class="text-xs text-text-muted mt-1">建立日期：{{ new Date(order.created_at).toLocaleDateString('zh-TW') }}</p>
+    <template v-else-if="order">
+
+      <!-- Payment Result Alert -->
+      <div
+        v-if="paymentResult && paymentMessages[paymentResult]"
+        class="flex items-center gap-3 px-5 py-4 mb-8 border text-sm"
+        :class="{
+          'border-[#88CC00]/40 bg-[#88CC00]/5 text-[#88CC00]': paymentResult === 'success',
+          'border-coral/40 bg-coral/5 text-coral': paymentResult === 'failed',
+          'border-border bg-surface-card text-stone': paymentResult === 'pending'
+        }"
+      >
+        <span class="font-mono text-[10px] tracking-wider uppercase shrink-0" style="font-family: 'JetBrains Mono', monospace;">
+          {{ paymentResult === 'success' ? '付款成功' : paymentResult === 'failed' ? '付款失敗' : '查詢中' }}
+        </span>
+        <span class="text-xs">{{ paymentMessages[paymentResult].text }}</span>
+      </div>
+
+      <!-- Page header + status -->
+      <div class="flex items-end justify-between mb-10 border-b border-border pb-8">
+        <div class="flex flex-col gap-1.5">
+          <span class="text-lime font-mono text-[10px] tracking-[3px] uppercase" style="font-family: 'JetBrains Mono', monospace;">Order Detail</span>
+          <h1 class="text-4xl md:text-5xl font-semibold italic text-chalk" style="font-family: 'Cormorant Garamond', serif;">訂單詳情</h1>
         </div>
         <span
-          class="text-xs px-3 py-1 rounded-full font-medium"
-          :class="statusMap[order.status]?.cls || 'bg-gray-100 text-gray-600'"
+          class="text-[10px] px-3 py-1.5 font-mono tracking-[1px] uppercase shrink-0"
+          :class="{
+            'text-[#88CC00] border border-[#88CC00]/30 bg-[#88CC00]/10': order.status === 'paid',
+            'text-lime border border-lime/30 bg-lime/5': order.status === 'pending',
+            'text-coral border border-coral/30 bg-coral/10': order.status === 'failed'
+          }"
+          style="font-family: 'JetBrains Mono', monospace;"
         >
           {{ statusMap[order.status]?.label || order.status }}
         </span>
       </div>
-    </div>
 
-    <!-- Recipient Info -->
-    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-      <h2 class="font-medium text-text-primary mb-3">收件資訊</h2>
-      <div class="text-sm space-y-2 text-text-secondary">
-        <p>收件人：{{ order.recipient_name }}</p>
-        <p>Email：{{ order.recipient_email }}</p>
-        <p>地址：{{ order.recipient_address }}</p>
+      <!-- Two column layout -->
+      <div class="flex flex-col lg:flex-row gap-0.5">
+
+        <!-- Left: main content -->
+        <div class="lg:flex-1 flex flex-col gap-0.5">
+
+          <!-- Order Info -->
+          <div class="bg-surface-card border border-border px-6 py-5">
+            <p class="text-chalk font-mono text-sm mb-1" style="font-family: 'JetBrains Mono', monospace;">{{ order.order_no }}</p>
+            <p class="text-stone text-xs" style="font-family: 'JetBrains Mono', monospace;">
+              建立日期：{{ new Date(order.created_at).toLocaleDateString('zh-TW') }}
+            </p>
+          </div>
+
+          <!-- Recipient Info -->
+          <div class="bg-surface-card border border-border px-6 py-6">
+            <h2 class="text-[9px] font-mono tracking-[3px] uppercase text-stone mb-4" style="font-family: 'JetBrains Mono', monospace;">收件資訊</h2>
+            <div class="flex flex-col gap-2 text-sm">
+              <div class="flex gap-4">
+                <span class="text-stone w-14 shrink-0">收件人</span>
+                <span class="text-chalk">{{ order.recipient_name }}</span>
+              </div>
+              <div class="flex gap-4">
+                <span class="text-stone w-14 shrink-0">Email</span>
+                <span class="text-chalk">{{ order.recipient_email }}</span>
+              </div>
+              <div class="flex gap-4">
+                <span class="text-stone w-14 shrink-0">地址</span>
+                <span class="text-chalk">{{ order.recipient_address }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Items Table -->
+          <div class="bg-surface-card border border-border">
+            <!-- Table header -->
+            <div class="grid grid-cols-[1fr_120px_60px_120px] gap-4 items-center px-6 py-3 border-b border-border bg-[#111111]">
+              <span class="text-stone text-[10px] tracking-[1px] uppercase" style="font-family: 'JetBrains Mono', monospace;">商品名稱</span>
+              <span class="text-stone text-[10px] tracking-[1px] uppercase text-right" style="font-family: 'JetBrains Mono', monospace;">單價</span>
+              <span class="text-stone text-[10px] tracking-[1px] uppercase text-center" style="font-family: 'JetBrains Mono', monospace;">數量</span>
+              <span class="text-stone text-[10px] tracking-[1px] uppercase text-right" style="font-family: 'JetBrains Mono', monospace;">小計</span>
+            </div>
+
+            <!-- Items -->
+            <div
+              v-for="item in order.items"
+              :key="item.id"
+              class="grid grid-cols-[1fr_120px_60px_120px] gap-4 items-center px-6 py-4 border-b border-border last:border-0"
+            >
+              <span class="text-chalk text-sm">{{ item.product_name }}</span>
+              <span class="text-stone text-sm font-mono text-right" style="font-family: 'JetBrains Mono', monospace;">NT$ {{ item.product_price.toLocaleString() }}</span>
+              <span class="text-stone text-sm font-mono text-center" style="font-family: 'JetBrains Mono', monospace;">{{ item.quantity }}</span>
+              <span class="text-lime text-sm font-mono text-right" style="font-family: 'JetBrains Mono', monospace;">NT$ {{ (item.product_price * item.quantity).toLocaleString() }}</span>
+            </div>
+
+            <!-- Total row -->
+            <div class="grid grid-cols-[1fr_120px_60px_120px] gap-4 items-center px-6 py-4 bg-[#0d0d0d]">
+              <span class="col-span-3 text-stone text-[10px] tracking-[1px] uppercase text-right font-mono" style="font-family: 'JetBrains Mono', monospace;">總計</span>
+              <span class="text-lime text-xl font-semibold italic text-right" style="font-family: 'Cormorant Garamond', serif;">
+                NT$ {{ order.total_amount.toLocaleString() }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Actions -->
+        <div class="lg:w-[320px] shrink-0">
+          <div class="bg-surface-card border border-border p-8 lg:sticky lg:top-24">
+            <h2 class="text-[9px] font-mono tracking-[3px] uppercase text-stone mb-6" style="font-family: 'JetBrains Mono', monospace;">訂單操作</h2>
+
+            <div v-if="order.status === 'pending'" class="flex flex-col gap-2">
+              <a
+                :href="'/ecpay/payment/' + order.id"
+                class="w-full bg-lime text-ink py-3.5 text-[11px] font-bold tracking-[3px] uppercase hover:bg-lime/90 transition-colors text-center block"
+                style="font-family: 'JetBrains Mono', monospace;"
+              >
+                前往 ECPay 付款
+              </a>
+              <button
+                @click="checkPayment"
+                :disabled="paying"
+                class="w-full border border-border text-stone py-3.5 text-[11px] tracking-[2px] uppercase hover:border-stone hover:text-chalk transition-colors disabled:opacity-40"
+                style="font-family: 'JetBrains Mono', monospace;"
+              >
+                {{ paying ? '查詢中...' : '查詢付款狀態' }}
+              </button>
+            </div>
+
+            <div v-else-if="order.status === 'paid'" class="text-center py-4">
+              <p class="text-[#88CC00] text-sm mb-2">付款已完成</p>
+              <p class="text-stone text-xs" style="font-family: 'JetBrains Mono', monospace;">感謝您的訂購</p>
+            </div>
+
+            <div class="mt-6 pt-6 border-t border-border">
+              <a href="/orders" class="flex items-center gap-2 text-stone hover:text-chalk transition-colors text-xs" style="font-family: 'JetBrains Mono', monospace;">
+                <span>&larr;</span>
+                <span>返回訂單列表</span>
+              </a>
+            </div>
+
+            <p class="text-[#444] text-[9px] text-center mt-6 leading-relaxed tracking-wider" style="font-family: 'JetBrains Mono', monospace;">
+              SSL 加密保護 · 由綠界科技處理付款
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <!-- Order Items -->
-    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-      <h2 class="font-medium text-text-primary mb-3">商品明細</h2>
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b border-gray-100 text-text-muted">
-            <th class="text-left py-2 font-normal">商品名稱</th>
-            <th class="text-right py-2 font-normal">單價</th>
-            <th class="text-right py-2 font-normal">數量</th>
-            <th class="text-right py-2 font-normal">小計</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in order.items" :key="item.id" class="border-b border-gray-50">
-            <td class="py-3 text-text-primary">{{ item.product_name }}</td>
-            <td class="py-3 text-right text-text-secondary">NT$ {{ item.product_price.toLocaleString() }}</td>
-            <td class="py-3 text-right text-text-secondary">{{ item.quantity }}</td>
-            <td class="py-3 text-right text-text-primary font-medium">NT$ {{ (item.product_price * item.quantity).toLocaleString() }}</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="3" class="pt-3 text-right font-bold text-text-primary">總計</td>
-            <td class="pt-3 text-right font-bold text-rose-primary text-lg">NT$ {{ order.total_amount.toLocaleString() }}</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-
-    <!-- Payment Actions -->
-    <div v-if="order.status === 'pending'" class="flex gap-4">
-      <button
-        @click="checkPayment"
-        :disabled="paying"
-        class="bg-sage text-white px-8 py-3 rounded-full text-sm font-medium hover:bg-sage/90 transition-colors disabled:opacity-50"
-      >
-        {{ paying ? '查詢中...' : '查詢付款狀態' }}
-      </button>
-      <a
-        :href="'/ecpay/payment/' + order.id"
-        class="inline-block bg-rose-primary text-white px-8 py-3 rounded-full text-sm font-medium hover:bg-rose-dark transition-colors text-center"
-      >
-        前往付款
-      </a>
-    </div>
-  </template>
+    </template>
+  </div>
 </div>

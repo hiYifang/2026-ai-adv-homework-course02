@@ -1,8 +1,26 @@
-<div class="min-h-[60vh] flex items-center justify-center">
-  <div class="text-center">
-    <div class="text-6xl mb-4">&#127804;</div>
-    <h1 class="text-2xl font-bold text-text-primary mb-2" style="font-family: 'Noto Serif TC', serif;">找不到頁面</h1>
-    <p class="text-text-secondary mb-6">您造訪的頁面不存在</p>
-    <a href="/" class="inline-block bg-rose-primary text-white px-6 py-2 rounded-full text-sm hover:bg-rose-dark transition-colors">回到首頁</a>
+<div class="relative w-full overflow-hidden flex items-center justify-center" style="min-height: calc(100vh - 72px - 280px);">
+
+  <!-- Large background "404" text -->
+  <span class="absolute select-none pointer-events-none font-bold italic text-[#111111] leading-none"
+    style="font-size: clamp(160px, 30vw, 340px); font-family: 'Cormorant Garamond', serif; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+    404
+  </span>
+
+  <!-- Content -->
+  <div class="relative z-10 flex flex-col items-center text-center px-6 py-20">
+    <span class="text-lime font-mono text-[10px] tracking-[4px] uppercase mb-4" style="font-family: 'JetBrains Mono', monospace;">PAGE NOT FOUND</span>
+    <h1 class="text-5xl md:text-7xl font-semibold italic text-chalk mb-4 leading-tight" style="font-family: 'Cormorant Garamond', serif;">
+      找不到頁面
+    </h1>
+    <p class="text-stone text-sm mb-10 max-w-xs leading-relaxed">您造訪的頁面不存在或已被移除。</p>
+    <div class="flex items-center gap-3">
+      <a href="/" class="bg-lime text-ink px-8 py-3 text-[11px] font-bold tracking-[3px] uppercase hover:bg-lime/90 transition-colors" style="font-family: 'JetBrains Mono', monospace;">
+        回到首頁
+      </a>
+      <a href="/#products" class="border border-border text-chalk px-8 py-3 text-[11px] tracking-[3px] uppercase hover:border-stone transition-colors" style="font-family: 'JetBrains Mono', monospace;">
+        瀏覽商品
+      </a>
+    </div>
   </div>
+
 </div>
