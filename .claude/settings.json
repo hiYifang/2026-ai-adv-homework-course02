@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Edit(~/.npm/**)",
-      "Read(~/.npm/**)"
+      "Read(~/.npm/**)",
+      "mcp__playwright__browser_navigate",
+      "Write(.claude/skills/**)",
+      "Edit(.claude/skills/**)"
     ],
     "deny": [
       "Bash(rm -rf *)",
@@ -21,7 +24,10 @@
         "*.npmjs.org",
         "*.github.com",
         "github.com",
-        "*.githubusercontent.com"
+        "*.githubusercontent.com",
+        "payment-stage.ecpay.com.tw",
+        "pay-stage.ecpay.com.tw",
+        "*.ecpay.com.tw"
       ]
     }
   }
